@@ -1,16 +1,151 @@
-# React + Vite
+# D5 - useContext in React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## What is Prop Drilling?
+When we have to pass data from parent to child through multiple 
+intermediate components which don't even use that data — 
+this is called Prop Drilling.
 
-Currently, two official plugins are available:
+## What is useContext?
+useContext is a React Hook that solves the prop drilling problem.
+Any component can directly access the data without passing 
+props through every level.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 3 Steps to use useContext:
 
-## React Compiler
+### Step 1 — Create Context
+```jsx
+export const UserContext = createContext(null)
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Step 2 — Wrap with Provider
+```jsx
+const [user, setUser] = useState("Fardin")
 
-## Expanding the ESLint configuration
+<UserContext.Provider value={user}>
+  {/* all components here */}
+</UserContext.Provider>
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Step 3 — Use in any Component
+```jsx
+const user = useContext(UserContext)
+```
+
+## Important Points:
+- Create context in a separate file to avoid circular imports
+- Always pass state in Provider value — not normal variable
+- Any component inside Provider can access data — nested or normal
+- useState cannot be used in main.jsx — only in function components
+
+
+
+
+
+# 📘 React Children (Notes)
+
+## 🔹 What is `children`?
+
+`children` is a special prop in React used to pass and render nested content inside a component.
+
+When elements are placed between the opening and closing tags of a component, React automatically stores them in the `children` prop.
+
+---
+
+## 🔹 Example
+
+```jsx
+<Dashboard>
+  <Profile />
+</Dashboard>
+````
+
+👉 Internally, React converts it to:
+
+```jsx
+<Dashboard children={<Profile />} />
+```
+
+---
+
+## 🔹 Syntax
+
+```jsx
+const Dashboard = ({ children }) => {
+  return (
+    <div>
+      <h3>This is Dashboard</h3>
+      {children}
+    </div>
+  );
+};
+
+
+## 🔹 Key Points
+
+* `children` is a **reserved and special prop** in React
+* It **cannot be renamed**
+* It can hold:
+
+  * A single element
+  * Multiple elements
+  * Text, JSX, or components
+* Common use cases:
+
+  * Wrapper components
+  * Layout components
+  * Reusable UI components
+
+---
+
+## 🔹 Multiple Children Example
+
+```jsx
+<Dashboard>
+  <Profile />
+  <h4>Hello</h4>
+  <button>Click Me</button>
+</Dashboard>
+```
+
+---
+
+## 🔹 Output
+
+```
+This is Dashboard
+This is Profile
+Hello
+Click Me
+```
+
+---
+
+## 🔹 Important Rule
+
+❗ If `{children}` is not rendered inside the component, the nested content will not be displayed.
+
+---
+
+## 🔹 Children vs Props
+
+| Feature        | Children            | Props                   |
+| -------------- | ------------------- | ----------------------- |
+| Passing method | Inside component    | Attributes              |
+| Rename allowed | ❌ No                | ✅ Yes                   |
+| Example        | `<Comp>Data</Comp>` | `<Comp data="value" />` |
+
+---
+
+## 🔹 Real-life Analogy
+
+* Dashboard = Container
+* Profile = Content inside the container
+
+The container must render `{children}` to display its content.
+
+---
+
+## 🔥 Interview Line
+
+> "children is a special prop in React used to pass and render nested components."
+
